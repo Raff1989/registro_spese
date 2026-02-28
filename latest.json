@@ -1,10 +1,10 @@
 {
-  "version": "1.0.1",
-  "notes": "Aggiornamento alla versione 1.0.1: risolti problemi di stabilità.",
+  "version": "1.0.2",
+  "notes": "Aggiornamento alla versione 1.0.2: risolti problemi di stabilità.",
   "pub_date": "2024-05-20T19:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "7bhEZTow/AOr++cQpNTiVcXzXlkobkJ+bDEVuQq2is49+1fE2Djm1Qe5lfqgtJAQcJ+yV35YT3y1vc2iRyxiCw==",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRdzdjeHRWeThGNUNBRGVlQUZFb0gyeC9zbm1JZzFJL2VQZG01Z2ZvN2s3S0lOQWxHdURtUFJpVHlxTmFDRFF2NDQvY2hiZHdJc2lsTkFsOGtCblJMKzc5OWlFUUh2V2dnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyMjg2ODYzCWZpbGU6UmVnaXN0cm8gU3Blc2VfMS4wLjJfeDY0X2VuLVVTLm1zaQpySHlGSlRRZlNyMllodzZIQ3Nma2plbjN0RWZNVEVZcXhDVmNMVGkwb1N1dU9Qbk5XaEx6TmhOVXJQZysrdUNLdUMvdVVZcHYydUlOZjNTL2JxekVDUT09Cg==",
       "url": "https://github.com/Raff1989/registro_spese/releases/download/v.1.0.1_on_publish/Registro.Spese_1.0.1_x64_en-US.msi"
     }
   }
