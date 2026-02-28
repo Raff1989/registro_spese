@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 
   "productName": "Registro Spese",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.registro.spese",
 
   "build": {
@@ -45,7 +45,7 @@
     },
 
     "updater": {
-      "active": true,
+      "active": false,
       "endpoints": [
         "https://raw.githubusercontent.com/Raff1989/registro_spese/main/latest.json"
       ],
