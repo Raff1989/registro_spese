@@ -1,0 +1,15 @@
+{
+  "appId": "com.raffaele.registrospese",
+  "appName": "Registro Spese",
+  "webDir": "dist",
+  "plugins": {
+  "Camera": {
+    "allowEditing": false,
+    "resultType": "dataUrl",
+    "saveToGallery": false,
+    "source": "camera",
+    "presentationStyle": "fullscreen"
+  }
+}
+
+}

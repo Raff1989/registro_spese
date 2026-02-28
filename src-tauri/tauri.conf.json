@@ -1,0 +1,68 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+
+  "productName": "Registro Spese",
+  "version": "1.0.0",
+  "identifier": "com.registro.spese",
+
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:8080",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+
+  "app": {
+    "windows": [
+      {
+        "title": "Registro Spese",
+        "width": 1100,
+        "height": 750,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+
+  "plugins": {
+    "fs": {
+      "scope": ["$APPDATA/registro-spese/*"]
+    },
+    "shell": {
+      "open": true
+    },
+    "notification": {
+      "default": true
+    },
+    "tray": {
+      "iconPath": "icons/tray-icon.png"
+    },
+
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://raw.githubusercontent.com/Raff1989/registro_spese/main/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU0MDUyRjU3NkRDQ0VEMzAKUldRdzdjeHRWeThGNUpBU2V0NGhZYWEwcE1nUmJ6amdaazVzdDRCalhwZXEwMFBYdTBBelVkYzcK"
+    }
+  },
+
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
