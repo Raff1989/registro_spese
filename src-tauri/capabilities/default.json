@@ -6,6 +6,11 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "shell:allow-open",
+    "core:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install",
+    "updater:default",
+    "log:default"
   ]
 }

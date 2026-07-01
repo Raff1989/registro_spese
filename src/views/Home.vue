@@ -1,33 +1,91 @@
 <template>
   <main class="app p-3">
 
-    <!-- FORM AGGIUNTA SPESA -->
-    <Card class="mb-3">
-      <template #title>
-        <div class="title-row">
-          <span class="title-center">Aggiungi Spesa</span>
+    <!-- WRAPPER RESPONSIVE -->
+    <div class="home-grid">
 
-          <div class="filter-btn-wrapper">
-            <Button
-              icon="pi pi-filter"
-              class="p-button-rounded p-button-text"
-              @click="showFilters = true"
-            />
+      <!-- ============================
+           COLONNA SINISTRA (FORM)
+      ============================ -->
+      <div class="col-left">
 
-            <span v-if="activeFiltersCount > 0" class="filter-badge">
-              {{ activeFiltersCount }}
-            </span>
+        <!-- FORM AGGIUNTA SPESA -->
+        <Card class="mb-3">
+          <template #title>
+            <div class="title-row">
+              <h3>Aggiungi Spesa</h3>
+
+              <div class="filter-btn-wrapper">
+                <Button
+                  icon="pi pi-filter"
+                  class="p-button-rounded p-button-text"
+                  @click="showFilters = true"
+                />
+
+                <span v-if="activeFiltersCount > 0" class="filter-badge">
+                  {{ activeFiltersCount }}
+                </span>
+              </div>
+            </div>
+          </template>
+
+          <template #content>
+            <ExpenseForm @add-expense="addExpense" />
+          </template>
+        </Card>
+
+      </div>
+
+      <!-- ============================
+           COLONNA DESTRA (LISTA + TOTALI)
+      ============================ -->
+      <div class="col-right">
+
+        <!-- LISTA SPESE -->
+        <ExpenseList
+          :expenses="filteredExpenses"
+          @delete-expense="deleteExpense"
+          @edit-expense="updateExpense"
+        />
+
+        <!-- TOTALI -->
+        <div class="grid">
+
+          <div class="col-12 md:col-6" style="margin-top: 20px;">
+            <Card class="total-card">
+              <template #title>
+                <div class="total-title">Totale Oggi</div>
+              </template>
+
+              <template #content>
+                <h2 class="total-value">{{ dailyTotal.toFixed(2) }} €</h2>
+              </template>
+            </Card>
           </div>
+
+          <div class="col-12 md:col-6" style="margin-top: 20px;">
+            <Card class="total-card">
+              <template #title>
+                <div class="total-title">
+                  Totale {{ currentMonthLabel }}
+                </div>
+              </template>
+
+              <template #content>
+                <h2 class="total-value">{{ monthlyTotal.toFixed(2) }} €</h2>
+              </template>
+            </Card>
+          </div>
+
         </div>
-      </template>
 
+      </div>
 
-      <template #content>
-        <ExpenseForm @add-expense="addExpense" />
-      </template>
-    </Card>
+    </div>
 
-    <!-- FILTRI -->
+    <!-- ============================
+         MODALE FILTRI
+    ============================ -->
     <Dialog
       v-model:visible="showFilters"
       header="Ricerca Avanzata"
@@ -46,30 +104,6 @@
               { label: 'Dal più recente', value: 'desc' },
               { label: 'Dal meno recente', value: 'asc' }
             ]"
-            optionLabel="label"
-            optionValue="value"
-            class="w-full"
-          />
-        </div>
-
-        <!-- Mese -->
-        <div class="col-12">
-          <label class="block mb-1">Mese</label>
-          <Dropdown
-            v-model="filterMonth"
-            :options="monthOptions"
-            optionLabel="label"
-            optionValue="value"
-            class="w-full"
-          />
-        </div>
-
-        <!-- Anno -->
-        <div class="col-12">
-          <label class="block mb-1">Anno</label>
-          <Dropdown
-            v-model="filterYear"
-            :options="years.map(y => ({ label: y, value: y }))"
             optionLabel="label"
             optionValue="value"
             class="w-full"
@@ -112,7 +146,6 @@
 
       </div>
 
-      <!-- BOTTONI -->
       <template #footer>
         <div class="filters-footer">
           <Button
@@ -129,64 +162,11 @@
         </div>
       </template>
 
-
-
     </Dialog>
-
-
-    <!-- LISTA SPESE -->
-    <ExpenseList
-      :expenses="filteredExpenses"
-      @delete-expense="deleteExpense"
-      @edit-expense="updateExpense"
-    />
-
-    <!-- TOTALI -->
-  <div class="grid">
-
-    <!-- <div class="col-12 md:col-6">
-      <Card>
-        <template #title>Totale Oggi</template>
-        <template #content>
-          <h2>{{ dailyTotal.toFixed(2) }} €</h2>
-        </template>
-      </Card>
-    </div> -->
-
-<div class="col-12 md:col-6">
-  <Card class="total-card">
-    <template #title>
-      <div class="total-title">Totale Oggi</div>
-    </template>
-
-    <template #content>
-      <h2 class="total-value">{{ dailyTotal.toFixed(2) }} €</h2>
-    </template>
-  </Card>
-</div>
-
-<div class="col-12 md:col-6">
-  <Card class="total-card">
-    <template #title>
-      <div class="total-title">
-        Totale {{ currentMonthLabel }}
-      </div>
-    </template>
-
-    <template #content>
-      <h2 class="total-value">{{ monthlyTotal.toFixed(2) }} €</h2>
-    </template>
-  </Card>
-</div>
-
-
-
-
-  </div>
-
 
   </main>
 </template>
+
 
 
 <script setup>
@@ -205,6 +185,8 @@ import "moment/locale/it";
 moment.locale("it");
 
 
+
+
 // -----------------------------
 // FILTRI
 // -----------------------------
@@ -213,6 +195,7 @@ const sortOrder = ref("desc");
 const filterCategory = ref({ label: "Spesa", value: "Spesa" });
 const filterStore = ref("");
 const filterDateRaw = ref("");
+
 
 const filterDate = computed({
   get() {
@@ -226,6 +209,9 @@ const filterDate = computed({
       : "";
   }
 });
+
+
+
 
 const activeFiltersCount = computed(() => {
   let count = 0;
@@ -333,15 +319,77 @@ function toggleTheme() {
 }
 
 
+// // -----------------------------
+// // SPESE
+// // -----------------------------
+// const expenses = ref([]);
+
+// onMounted(() => {
+//   const saved = localStorage.getItem("expenses");
+//   if (saved) expenses.value = JSON.parse(saved);
+// });
+
+// watch(
+//   expenses,
+//   (newVal) => {
+//     localStorage.setItem("expenses", JSON.stringify(newVal));
+//   },
+//   { deep: true }
+// );
+
+// function addExpense(expense) {
+//   expenses.value.push(expense);
+// }
+
+// function updateExpense(updated) {
+//   expenses.value = expenses.value.map((e) =>
+//     e.id === updated.id ? updated : e
+//   );
+// }
+
+// function deleteExpense(id) {
+//   expenses.value = expenses.value.filter((e) => e.id !== id);
+// }
+
 // -----------------------------
 // SPESE
 // -----------------------------
 const expenses = ref([]);
 
+
 onMounted(() => {
   const saved = localStorage.getItem("expenses");
   if (saved) expenses.value = JSON.parse(saved);
+
+  checkMonthReset();
 });
+
+
+function checkMonthReset() {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const last = localStorage.getItem("last-month");
+  const lastYear = localStorage.getItem("last-year");
+
+  // Primo avvio → salva mese corrente
+  if (!last || !lastYear) {
+    localStorage.setItem("last-month", currentMonth);
+    localStorage.setItem("last-year", currentYear);
+    return;
+  }
+
+  // 🔥 Se il mese è cambiato → resetta SOLO la vista della Home
+  if (Number(last) !== currentMonth || Number(lastYear) !== currentYear) {
+    // Aggiorna mese salvato
+    localStorage.setItem("last-month", currentMonth);
+    localStorage.setItem("last-year", currentYear);
+
+    // NON cancelliamo expenses (serve allo Storico)
+    // Ma la Home mostrerà solo quelle del mese corrente
+  }
+}
 
 watch(
   expenses,
@@ -366,6 +414,9 @@ function deleteExpense(id) {
 }
 
 
+
+
+
 // -----------------------------
 // ANNI DISPONIBILI
 // -----------------------------
@@ -378,16 +429,55 @@ const years = computed(() => {
 // -----------------------------
 // FILTRI AVANZATI
 // -----------------------------
+// const filteredExpenses = computed(() => {
+//   let list = expenses.value.filter((e) => {
+//     const d = new Date(e.date);
+//     const year = d.getFullYear();
+//     const month = d.getMonth() + 1;
+
+//     const matchCategory =
+//     filterCategory.value.value === "Spesa" ||
+//     e.category.trim().toLowerCase() === filterCategory.value.toLowerCase();
+
+
+//     const matchStore =
+//       filterStore.value.trim() === "" ||
+//       e.name.toLowerCase().includes(filterStore.value.toLowerCase());
+
+//     const matchDate =
+//       filterDateRaw.value === "" ||
+//       e.date === filterDateRaw.value;
+
+
+//     const matchMonth =
+//       filterMonth.value.value === "" ||
+//       Number(filterMonth.value.value) === month;
+
+//     const matchYear =
+//       filterYear.value.value === "" ||
+//       Number(filterYear.value.value) === year;
+
+//     return matchCategory && matchStore && matchDate && matchMonth && matchYear;
+//   });
+
+//   list.sort((a, b) => {
+//     const da = new Date(a.date);
+//     const db = new Date(b.date);
+//     return sortOrder.value === "desc" ? db - da : da - db;
+//   });
+
+//   return list;
+// });
+
 const filteredExpenses = computed(() => {
-  let list = expenses.value.filter((e) => {
+  let list = currentMonthExpenses.value.filter((e) => {
     const d = new Date(e.date);
     const year = d.getFullYear();
     const month = d.getMonth() + 1;
 
     const matchCategory =
-    filterCategory.value.value === "Spesa" ||
-    e.category.trim().toLowerCase() === filterCategory.value.toLowerCase();
-
+      filterCategory.value.value === "Spesa" ||
+      e.category.trim().toLowerCase() === filterCategory.value.toLowerCase();
 
     const matchStore =
       filterStore.value.trim() === "" ||
@@ -396,7 +486,6 @@ const filteredExpenses = computed(() => {
     const matchDate =
       filterDateRaw.value === "" ||
       e.date === filterDateRaw.value;
-
 
     const matchMonth =
       filterMonth.value.value === "" ||
@@ -418,6 +507,18 @@ const filteredExpenses = computed(() => {
   return list;
 });
 
+const currentMonthExpenses = computed(() => {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+
+  return expenses.value.filter((e) => {
+    const d = new Date(e.date);
+    const m = d.getMonth() + 1;
+    const y = d.getFullYear();
+    return m === month && y === year;
+  });
+});
 
 // -----------------------------
 // RESET FILTRI
@@ -477,8 +578,6 @@ const currentMonthLabel = computed(() => {
 });
 
 </script>
-
-
 
 <style>
 
@@ -822,5 +921,55 @@ select {
   z-index: 9999;
 }
 
+/* ============================
+   🖥 LAYOUT DESKTOP (≥ 1024px)
+============================ */
+@media (min-width: 1024px) {
+
+  /* Wrapper principale a due colonne */
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 50% - 50% */
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  /* Colonna sinistra (form) */
+  .col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Colonna destra (lista + totali) */
+  .col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* La card Aggiungi Spesa non deve allungarsi */
+  .col-left > .p-card {
+    height: fit-content;
+  }
+
+  /* La lista spese occupa lo spazio verticale */
+  .col-right {
+    min-height: 100%;
+  }
+
+  /* La tua app non deve essere limitata a 480px su desktop */
+  .app {
+    max-width: 100%;
+    padding: 20px 40px;
+  }
+
+  /* Totali più larghi e armonizzati */
+  .total-card {
+    height: 150px;
+  }
+}
 
 </style>

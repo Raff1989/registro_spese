@@ -1,27 +1,36 @@
 <template>
-  <div class="custom-select">
-    <div class="selected" @click="open = !open">
-      <img :src="selected.icon" width="22" />
-      <span>{{ selected.label }}</span>
-      <span class="arrow">▼</span>
-    </div>
-
-    <div v-if="open" class="options">
-      <div
-        v-for="opt in options"
-        :key="opt.value"
-        class="option"
-        @click="select(opt)"
-      >
-        <img :src="opt.icon" width="22" />
-        <span>{{ opt.label }}</span>
+  <Dropdown
+    v-model="selected"
+    :options="options"
+    optionLabel="label"
+    placeholder="Seleziona una categoria"
+    class="custom-category-dropdown" 
+    @change="onSelect"
+  >
+    <template #value="slotProps">
+      <div v-if="slotProps.value" class="flex items-center gap-2">
+        <img :src="slotProps.value.icon" width="22" />
+        <span>{{ slotProps.value.label }}</span>
       </div>
-    </div>
-  </div>
+      <span v-else>{{ slotProps.placeholder }}</span>
+    </template>
+
+    <template #option="slotProps">
+      <div class="flex items-center gap-2">
+        <img :src="slotProps.option.icon" width="22" />
+        <span>{{ slotProps.option.label }}</span>
+      </div>
+    </template>
+
+    <template #dropdownicon="{ isOpen }">
+      <span class="arrow-icon" :class="{ 'is-open': isOpen }">▼</span>
+    </template>
+  </Dropdown>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
+import Dropdown from 'primevue/dropdown';
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
@@ -48,84 +57,86 @@ const options = [
   { value: "Altro", label: "Altro", icon: "/assets/emoticon.svg" }
 ];
 
-defineExpose({ options });
+const selected = ref(null);
 
-
-const open = ref(false);
-const selected = ref(options[0]);
-
-// sincronizza modelValue → selected
-// watch(() => props.modelValue, (val) => {
-//   if (val) selected.value = val;
-// });
-
+// Sincronizzazione ingresso
 watch(
   () => props.modelValue,
   (val) => {
-    if (!val) return;
-
-    // Se modelValue è una stringa (categoria salvata), trova l’oggetto corretto
-    if (typeof val === "string") {
-      const found = options.find(o => o.value === val);
-      if (found) selected.value = found;
+    if (!val) {
+        selected.value = options[0];
+        return;
     }
-
-    // Se è già un oggetto (creazione), usalo direttamente
-    else if (typeof val === "object") {
+    if (typeof val === "string") {
+      selected.value = options.find(o => o.value === val) || options[0];
+    } else {
       selected.value = val;
     }
   },
   { immediate: true }
 );
 
-
-function select(opt) {
-  selected.value = opt;
-  emit("update:modelValue", opt); // emettiamo l’oggetto completo
-  open.value = false;
+function onSelect(event) {
+  emit("update:modelValue", event.value);
 }
 </script>
 
 <style scoped>
-.custom-select {
-  width: 100%;
-  position: relative;
+/* 1. Forza l'altezza e il contenitore principale */
+.custom-category-dropdown {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    border: none;
 }
 
-.selected {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
+/* 2. USA GLOBAL per colpire le classi interne di PrimeVue */
+:global(.p-dropdown.custom-category-dropdown) {
+    border-radius: 25px !important;
+
+    border: none;
 }
 
-.arrow {
-  margin-left: auto;
-  opacity: 0.6;
+/* 3. Arrotonda l'area dell'etichetta interna */
+:global(.custom-category-dropdown .p-dropdown-label) {
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    border-radius: 25px;
+    border: none;
 }
 
-.options {
-  position: absolute;
-  width: 100%;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-top: 4px;
-  z-index: 9999;
+/* 4. STONDA IL PANNELLO (quello che non si stondava) */
+/* Questa classe è spesso fuori dallo scope del componente */
+:global(.p-dropdown-panel) {
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #e0e0e0 !important;
+    border: none;
 }
 
-.option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
+/* 5. Arrotonda anche gli elementi interni della lista (hover effect) */
+:global(.p-dropdown-items-wrapper) {
+    border-radius: 15px !important;
+    border: none;
 }
 
-.option:hover {
-  background: #f0f0f0;
+/* Stili per la tua freccia personalizzata */
+.arrow-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    opacity: 0.6;
+    margin-right: 15px;
 }
+
+.arrow-icon.is-open {
+    transform: rotate(180deg);
+}
+
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 10px; }
 </style>

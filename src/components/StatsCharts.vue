@@ -3,327 +3,198 @@ import { onMounted, watch, ref } from "vue";
 import Chart from "chart.js/auto";
 
 const props = defineProps({
-  expenses: {
-    type: Array,
-    required: true
-  }
+  expenses: { type: Array, required: true }
 });
 
-// Canvas refs
 const pieCanvas = ref(null);
 const barCanvas = ref(null);
 const lineCanvas = ref(null);
 
-// Chart instances
 let pieChart = null;
 let barChart = null;
 let lineChart = null;
 
-// -----------------------------
-// DISTRUGGE TUTTI I GRAFICI
-// -----------------------------
 function destroyCharts() {
-  if (pieChart) pieChart.destroy();
-  if (barChart) barChart.destroy();
-  if (lineChart) lineChart.destroy();
+  [pieChart, barChart, lineChart].forEach(chart => chart?.destroy());
 }
 
-// -----------------------------
-// AGGIORNA TUTTI I GRAFICI
-// -----------------------------
+const createGradient = (ctx, colorStart, colorEnd) => {
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, colorStart);
+  gradient.addColorStop(1, colorEnd);
+  return gradient;
+};
+
 function updateCharts() {
   const data = props.expenses;
-
   destroyCharts();
-
   if (!data || data.length === 0) return;
-
   updatePieChart(data);
   updateBarChart(data);
   updateLineChart(data);
 }
 
-// -----------------------------
-// 1️⃣ GRAFICO A TORTA (CATEGORIE)
-// -----------------------------
 function updatePieChart(data) {
   const categories = {};
-
-  data.forEach(e => {
-    categories[e.category] = (categories[e.category] || 0) + e.amount;
-  });
+  data.forEach(e => { categories[e.category] = (categories[e.category] || 0) + e.amount; });
+  const total = Object.values(categories).reduce((a, b) => a + b, 0);
 
   pieChart = new Chart(pieCanvas.value, {
     type: "pie",
     data: {
       labels: Object.keys(categories),
-      datasets: [
-        {
-          data: Object.values(categories),
-          backgroundColor: [
-            "#4da3ff", "#ff6384", "#ffcd56", "#4bc0c0",
-            "#9966ff", "#ff9f40", "#66cc66", "#cc6666"
-          ]
+      datasets: [{
+        data: Object.values(categories),
+        backgroundColor: ["#007aff", "#ff2d55", "#ffcc00", "#34c759", "#5856d6", "#ff9500", "#af52de", "#5ac8fa"],
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        borderRadius: 5
+      }]
+    },
+    options: {
+      plugins: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } },
+        tooltip: {
+          callbacks: {
+            label: (i) => `${i.label}: ${i.parsed.toFixed(2)}€ (${((i.parsed * 100) / total).toFixed(1)}%)`
+          }
         }
-      ]
+      },
+      cutout: '65%'
     }
   });
 }
 
-// -----------------------------
-// 2️⃣ GRAFICO A BARRE (TOTALE PER MESE)
-// -----------------------------
 function updateBarChart(data) {
+  const ctx = barCanvas.value.getContext('2d');
+  const gradient = createGradient(ctx, '#007aff', '#5ac8fa');
   const months = Array(12).fill(0);
-
-  data.forEach(e => {
-    const d = new Date(e.date);
-    months[d.getMonth()] += e.amount;
-  });
+  data.forEach(e => { months[new Date(e.date).getMonth()] += e.amount; });
 
   barChart = new Chart(barCanvas.value, {
     type: "bar",
     data: {
-      labels: [
-        "Gen", "Feb", "Mar", "Apr", "Mag", "Giu",
-        "Lug", "Ago", "Set", "Ott", "Nov", "Dic"
-      ],
-      datasets: [
-        {
-          label: "Spese mensili",
-          data: months,
-          backgroundColor: "#4da3ff"
-        }
-      ]
+      labels: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+      datasets: [{ data: months, backgroundColor: gradient, borderRadius: 8 }]
     },
     options: {
-      scales: {
-        y: { beginAtZero: true }
-      }
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
     }
   });
 }
 
-// -----------------------------
-// FORMATO DATA ITALIANA
-// -----------------------------
-function formatItalianDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  });
-}
-
-// -----------------------------
-// 3️⃣ GRAFICO LINEARE (ANDAMENTO GIORNALIERO)
-// -----------------------------
 function updateLineChart(data) {
+  const ctx = lineCanvas.value.getContext('2d');
+  const gradientFill = createGradient(ctx, 'rgba(0, 122, 255, 0.25)', 'rgba(0, 122, 255, 0)');
   const days = {};
-
-  data.forEach(e => {
-    days[e.date] = (days[e.date] || 0) + e.amount;
-  });
-
+  data.forEach(e => { days[e.date] = (days[e.date] || 0) + e.amount; });
   const sortedDates = Object.keys(days).sort();
 
   lineChart = new Chart(lineCanvas.value, {
     type: "line",
     data: {
-      labels: sortedDates.map(d => formatItalianDate(d)),
-      datasets: [
-        {
-          label: "Andamento giornaliero",
-          data: sortedDates.map(d => days[d]),
-          borderColor: "#ff6384",
-          backgroundColor: "rgba(255,99,132,0.2)",
-          tension: 0.3,
-          fill: true
-        }
-      ]
+      labels: sortedDates.map(d => new Date(d).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })),
+      datasets: [{
+        data: sortedDates.map(d => days[d]),
+        borderColor: "#007aff",
+        borderWidth: 3,
+        pointRadius: 3,
+        tension: 0.4,
+        fill: true,
+        backgroundColor: gradientFill
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } }
     }
   });
 }
 
-// -----------------------------
-// WATCH + MOUNT
-// -----------------------------
 onMounted(updateCharts);
 watch(() => props.expenses, updateCharts, { deep: true });
 </script>
-<!-- 
-<template>
-  <div class="charts-container">
-    <h3>Distribuzione per categoria</h3>
-    <canvas ref="pieCanvas"></canvas>
-
-    <h3>Spese per mese</h3>
-    <canvas ref="barCanvas"></canvas>
-
-    <h3>Andamento giornaliero</h3>
-    <canvas ref="lineCanvas"></canvas>
-  </div>
-</template> -->
-
-<!-- <template>
-  <div class="charts-container">
-
-  
-    <div class="charts-row">
-      <div class="chart-box">
-        <h3>Distribuzione per categoria</h3>
-        <canvas ref="pieCanvas"></canvas>
-      </div>
-
-      <div class="chart-box">
-        <h3>Spese per mese</h3>
-        <canvas ref="barCanvas"></canvas>
-      </div>
-    </div>
-    <div class="charts-row">
-      <div class="chart-box">
-        <h3>Andamento giornaliero</h3>
-        <canvas ref="lineCanvas"></canvas>
-      </div>
-    </div>
-
-
-  </div>
-</template>
-
-
-<style scoped>
-.charts-container {
-  margin-top: 20px;
-}
-
-canvas {
-  margin-bottom: 30px;
-  width: 100%;
-}
-
- @media (min-width: 768px) {
-  .chart-container {
-    max-width: 350px !important;
-    margin: 0 auto;
-  }
-}
-
-
-@media (min-width: 1024px) {
-  .chart-container {
-    max-width: 400px !important;
-  }
-}
-
- .charts-row {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.chart-box {
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .charts-row {
-    flex-direction: row;
-  }
-
-  .chart-box {
-    flex: 1;
-    max-width: 50%;
-  }
-}
-
-@media (min-width: 1024px) {
-  .chart-box {
-    max-width: 45%;
-  }
-}
-
-</style> -->
 
 <template>
-  <div class="charts-layout">
-
-    <!-- SINISTRA: TORTA -->
-    <div class="charts-left">
-      <h3>Distribuzione per categoria</h3>
-      <div class="chart-box">
-        <canvas ref="pieCanvas"></canvas>
+  <div class="charts-grid">
+    <div class="settings-group">
+      <span class="group-title">Ripartizione Categorie</span>
+      <div class="settings-card chart-container">
+        <div class="canvas-wrapper">
+          <canvas ref="pieCanvas"></canvas>
+        </div>
       </div>
     </div>
 
-    <!-- DESTRA: DUE RIGHE (BAR + LINE) -->
-    <div class="charts-right">
-      <div class="chart-block">
-        <h3>Spese per mese</h3>
-        <div class="chart-box">
+    <div class="settings-group">
+      <span class="group-title">Confronto Mensile</span>
+      <div class="settings-card chart-container">
+        <div class="canvas-wrapper">
           <canvas ref="barCanvas"></canvas>
         </div>
       </div>
+    </div>
 
-      <div class="chart-block">
-        <h3>Andamento giornaliero</h3>
-        <div class="chart-box">
+    <div class="settings-group full-width">
+      <span class="group-title">Andamento Temporale</span>
+      <div class="settings-card chart-container">
+        <div class="canvas-wrapper">
           <canvas ref="lineCanvas"></canvas>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <style scoped>
-.charts-layout {
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .charts-grid { grid-template-columns: 1fr 1fr; }
+  .full-width { grid-column: span 2; }
+}
+
+.settings-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  /* Blocchiamo l'altezza per evitare il tremolio della pagina */
+  height: 320px; 
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
 }
 
-/* blocchi base */
-.charts-left,
-.charts-right {
+/* Contenitore necessario per Chart.js con maintainAspectRatio: false */
+.canvas-wrapper {
+  position: relative;
+  flex-grow: 1;
   width: 100%;
-}
-
-.chart-box {
-  width: 100%;
+  height: 100%;
 }
 
 canvas {
-  width: 100%;
-  margin-bottom: 20px;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* Tablet / Desktop: layout a due colonne */
-@media (min-width: 768px) {
-  .charts-layout {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .charts-left {
-    flex: 1;
-    max-width: 45%;
-  }
-
-  .charts-right {
-    flex: 1;
-    max-width: 55%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .chart-block {
-    width: 100%;
-  }
+.group-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #8e8e93;
+  margin: 12px 0 8px 12px;
 }
 </style>
-

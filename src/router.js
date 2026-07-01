@@ -5,6 +5,7 @@ import Stats from "./views/Stats.vue";
 import Settings from "./views/Settings.vue";
 import Loading from "./views/Loading.vue";
 import Notes from "./views/Notes.vue";
+import Wallet from "./views/Wallet.vue";
 
 export default createRouter({
   history: createWebHashHistory(),
@@ -31,6 +32,7 @@ export default createRouter({
     { path: "/home", name: "home", component: Home },
     { path: "/stats", name: "stats", component: Stats },
     { path: "/notes", name: "notes", component: Notes },
+    { path: "/wallet", name: "wallet", component: Wallet },
     { path: "/settings", name: "settings", component: Settings }
   ]
 });

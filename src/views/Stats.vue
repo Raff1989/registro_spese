@@ -1,15 +1,18 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
 import StatsCharts from "../components/StatsCharts.vue";
 import moment from "moment";
 import "moment/locale/it";
 moment.locale("it");
 
 
+
 const expenses = ref([]);
 
 const filterMonth = ref("");
 const filterYear = ref("");
+const hasNewStats = inject("hasNewStats");
+
 
 // Lista anni disponibili
 const years = computed(() => {
@@ -101,170 +104,187 @@ onMounted(() => {
   if (saved) {
     expenses.value = JSON.parse(saved);
   }
+
 });
 </script>
 
 <template>
   <div class="stats-page">
-    <h2 class="flex justify-content-center">Statistiche</h2>
+    <div class="mobile-header">
+      <h2 style="display: flex;justify-content: center;margin-top: 25px;">Statistiche</h2>
+      <p class="subtitle">Analizza le tue abitudini di spesa</p>
+    </div>
 
-    <!-- FILTRI -->
-    <div class="filters-row">
-      <div class="filter-block">
-        <label>Mese</label>
-        <select v-model="filterMonth">
-          <option value="">Tutti</option>
-          <option value="1">Gennaio</option>
-          <option value="2">Febbraio</option>
-          <option value="3">Marzo</option>
-          <option value="4">Aprile</option>
-          <option value="5">Maggio</option>
-          <option value="6">Giugno</option>
-          <option value="7">Luglio</option>
-          <option value="8">Agosto</option>
-          <option value="9">Settembre</option>
-          <option value="10">Ottobre</option>
-          <option value="11">Novembre</option>
-          <option value="12">Dicembre</option>
-        </select>
-      </div>
-
-      <div class="filter-block">
-        <label>Anno</label>
-        <select v-model="filterYear">
-          <option value="">Tutti</option>
-          <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-        </select>
+    <div class="settings-group">
+      <span class="group-title">Filtra Periodo</span>
+      <div class="settings-card shadow-sm filters-container">
+        <div class="filter-item">
+          <i class="pi pi-calendar"></i>
+          <select v-model="filterMonth" class="custom-select">
+            <option value="">Tutti i mesi</option>
+            <option v-for="m in 12" :key="m" :value="m">{{ monthName(m) }}</option>
+          </select>
+        </div>
+        <div class="divider-h"></div>
+        <div class="filter-item">
+          <i class="pi pi-map"></i>
+          <select v-model="filterYear" class="custom-select">
+            <option value="">Tutti gli anni</option>
+            <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+          </select>
+        </div>
       </div>
     </div>
 
-    <!-- GRAFICI -->
-    <StatsCharts :expenses="filteredExpenses" />
-
-    <!-- CARD TOTALE -->
-    <div class="total-card">
-      <h3 class="total-title">
-        Totale {{ currentPeriodLabel }}
-      </h3>
-
-      <p class="total-amount">{{ monthlyTotal.toFixed(2) }} €</p>
+    <div class="settings-group">
+      <span class="group-title">Andamento Grafico</span>
+      <div class="settings-card shadow-sm chart-card">
+        <StatsCharts :expenses="filteredExpenses" />
+      </div>
     </div>
 
-    <!-- LISTA SPESE -->
-    <div class="expenses-list">
-      <h3>Spese del periodo</h3>
+    <div class="settings-group">
+      <span class="group-title">Riepilogo Economico</span>
+      <div class="settings-card shadow-sm total-display bg-gradient-blue">
+        <span class="total-label">Totale {{ currentPeriodLabel }}</span>
+        <span class="total-value">{{ monthlyTotal.toFixed(2) }} €</span>
+      </div>
+    </div>
 
-      <div
-          v-for="e in filteredExpenses"
-          :key="e.id"
-          class="expense-item"
-      >
-          <img
-            :src="getCategoryIcon(e.category)"
-            alt=""
-            class="expense-icon"
-          />
+    <div class="settings-group">
+      <span class="group-title">Dettaglio Spese</span>
+      <div class="settings-card shadow-sm">
+        <div v-if="filteredExpenses.length === 0" class="no-expenses">
+          <i class="pi pi-info-circle"></i>
+          <p>Nessuna spesa trovata</p>
+        </div>
 
-          <div class="expense-info">
-            <strong>{{ e.name }}</strong>
-            <div class="date">{{ moment(e.date).locale("it").format("DD/MM/YYYY") }}</div>
+        <div v-for="(e, index) in filteredExpenses" :key="e.id">
+          <div class="expense-row">
+            <div class="item-icon-wrapper">
+               <img :src="getCategoryIcon(e.category)" alt="" class="expense-icon" />
+            </div>
+            <div class="item-content">
+              <span class="item-title">{{ e.name }}</span>
+              <span class="item-desc">{{ moment(e.date).format("DD MMMM YYYY") }}</span>
+            </div>
+            <div class="item-amount">
+              {{ e.amount.toFixed(2) }} €
+            </div>
           </div>
-
-          <div class="amount">{{ e.amount.toFixed(2) }} €</div>
+          <div v-if="index < filteredExpenses.length - 1" class="divider"></div>
+        </div>
       </div>
-
-      <div v-if="filteredExpenses.length === 0" class="no-expenses">
-        Nessuna spesa trovata
-      </div>
-
     </div>
   </div>
 </template>
 
 <style scoped>
 .stats-page {
-  padding: 20px;
-  padding-bottom: 100px;
+  padding: 20px 16px 100px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.filters-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+/* Header & Titoli */
+.mobile-header { margin-bottom: 24px; }
+.mobile-header h2 { font-size: 2rem; font-weight: 800; margin: 0; color: #1c1c1e; }
+.subtitle { color: #8e8e93; font-size: 0.95rem; }
+
+.settings-group { margin-bottom: 24px; }
+.group-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #8e8e93;
+  margin-left: 12px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
-.filter-block {
-  flex: 1;
+/* Card Base */
+.settings-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
 }
 
-.total-card {
-  background: var(--card);
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 20px;
-  text-align: center;
-  height: 120px; /* identica alla Home */
+/* Filtri Moderni */
+.filters-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
-
-.total-title {
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.total-amount {
-  font-size: 1.6rem;
-  font-weight: bold;
-  margin: 0;
-}
-
-.expenses-list {
-  margin-top: 20px;
-}
-
-.expense-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--input-border);
-}
-
-.date {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.expense-item {
+.filter-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--input-border);
+  padding: 12px 16px;
   gap: 12px;
+  color: #8e8e93;
 }
-
-.expense-icon {
-  width: 28px;
-  height: 28px;
-  opacity: 0.9;
-}
-
-.expense-info {
+.custom-select {
   flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1c1c1e;
+  outline: none;
+  cursor: pointer;
 }
+.divider-h { height: 1px; background: rgba(0,0,0,0.05); margin: 0 16px; }
 
-.amount {
-  font-weight: bold;
+/* Grafico Card */
+.chart-card { padding: 20px 10px; }
+
+/* Card Totale Speciale */
+.total-display {
+  background: linear-gradient(135deg, #007aff, #0056b3);
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  color: white;
 }
+.total-label { font-size: 0.9rem; opacity: 0.9; font-weight: 500; }
+.total-value { font-size: 2.2rem; font-weight: 800; margin-top: 4px; }
+
+/* Lista Spese */
+.expense-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 14px;
+}
+.item-icon-wrapper {
+  width: 42px;
+  height: 42px;
+  background: #f2f2f7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.expense-icon { width: 24px; height: 24px; }
+.item-content { flex: 1; display: flex; flex-direction: column; }
+.item-title { font-weight: 700; color: #1c1c1e; font-size: 1rem; }
+.item-desc { font-size: 0.8rem; color: #8e8e93; text-transform: capitalize; }
+.item-amount { font-weight: 800; font-size: 1.1rem; color: #1c1c1e; }
+
+.divider { height: 1px; background: rgba(0,0,0,0.05); margin-left: 72px; }
 
 .no-expenses {
+  padding: 40px;
   text-align: center;
-  padding: 20px;
-  opacity: 0.7;
+  color: #8e8e93;
 }
+.no-expenses i { font-size: 2rem; margin-bottom: 10px; }
 
-
-
+/* Responsive Desktop */
+@media (min-width: 768px) {
+  .filters-container { flex-direction: row; padding: 10px; }
+  .divider-h { width: 1px; height: 30px; margin: auto 10px; }
+}
 </style>

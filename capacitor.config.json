@@ -2,14 +2,17 @@
   "appId": "com.raffaele.registrospese",
   "appName": "Registro Spese",
   "webDir": "dist",
+  "bundledWebRuntime": false,
   "plugins": {
-  "Camera": {
-    "allowEditing": false,
-    "resultType": "dataUrl",
-    "saveToGallery": false,
-    "source": "camera",
-    "presentationStyle": "fullscreen"
+    "Camera": {
+      "allowEditing": false,
+      "resultType": "dataUrl",
+      "saveToGallery": false,
+      "source": "camera",
+      "presentationStyle": "fullscreen"
+    },
+    "BarcodeScanner": {
+      "installGoogleBarcodeScannerModule": true
+    }
   }
-}
-
 }

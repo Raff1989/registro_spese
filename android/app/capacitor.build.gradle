@@ -10,13 +10,17 @@ android {
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
     implementation project(':capacitor-community-camera-preview')
+    implementation project(':capacitor-mlkit-barcode-scanning')
+    implementation project(':capacitor-mlkit-selfie-segmentation')
     implementation project(':capacitor-camera')
+    implementation project(':capacitor-device')
     implementation project(':capacitor-filesystem')
     implementation project(':capacitor-local-notifications')
+    implementation project(':capacitor-preferences')
     implementation project(':capacitor-share')
-
+    implementation "com.android.support:support-v4:27.+"
 }
-
+apply from: "../../node_modules/phonegap-plugin-barcodescanner/src/android/barcodescanner.gradle"
 
 if (hasProperty('postBuildExtras')) {
   postBuildExtras()

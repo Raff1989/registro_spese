@@ -1,11 +1,11 @@
 {
-  "version": "1.0.2",
-  "notes": "Aggiornamento alla versione 1.0.2: risolti problemi di stabilità.",
+  "version": "1.0.3",
+  "notes": "Aggiornamento alla versione 1.0.3: fix to app.",
   "pub_date": "2024-05-20T19:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRdzdjeHRWeThGNU9VS1hVRm1acS9FYTFzM3VPWk9SalZBRjd4UFRNVkJPSDJrOU0rK1d2NkV3N1owZ0p0c1dTcW5oclJlZHN3UFpnNnJNeWxHV25PTUgybllXaExVdXdrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyMjkwNjA0CWZpbGU6UmVnaXN0cm8gU3Blc2VfMS4wLjJfeDY0LXNldHVwLmV4ZQp3aGNNeWcwRnFYUlptL3ljcFE4Sm1VTldiTmltc2E5NXpGbjJNZnkxc1Q4KzdqbzJISW5Ka0pkZE8rYXh0aWJ4WXpKYWhmanQvbisxQ0piWG5JblhEdz09Cg==",
-      "url": "https://github.com/Raff1989/registro_spese/releases/download/v.1.0.1_on_publish/Registro.Spese_1.0.2_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUK3k0TjdyWFdOT2lZWE5Lb2wwNXBvQ2ZlQmRyTDdEcTl0eERXT3pKUGtUZGZLMVAxR2pHeFErWFNSMVFXL2p2NGFyeEZGb015U1RnVzk4OVl1MTNrYW5nR0xLRWJpa2dFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNjY2OTg4CWZpbGU6UmVnaXN0cm8gU3Blc2VfMS4wLjNfeDY0X2VuLVVTLnppcApHeTQ2bFYxSVpJb3BBcHZ5cXBCdEhRZDVsV25NWkg3U1N5N3d6SVAycDQ5Q0l2Mk56dUVvbEdpOGQxZFJVY0FYZVFtVGQ3SVFSSkVjSUNnVDM1NXREUT09Cg==",
+      "url": "https://github.com/Raff1989/registro_spese/releases/download/v.1.0.3_on_publish/Registro Spese_1.0.3_x64_en-US.msi"
     }
   }
 }

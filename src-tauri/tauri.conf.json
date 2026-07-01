@@ -2,12 +2,12 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 
   "productName": "Registro Spese",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "identifier": "com.registro.spese",
 
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:8080",
+    "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },
@@ -45,18 +45,18 @@
     },
 
     "updater": {
-      "active": false,
+      "active": true,
       "endpoints": [
         "https://raw.githubusercontent.com/Raff1989/registro_spese/main/latest.json"
       ],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU0MDUyRjU3NkRDQ0VEMzAKUldRdzdjeHRWeThGNUpBU2V0NGhZYWEwcE1nUmJ6amdaazVzdDRCalhwZXEwMFBYdTBBelVkYzcK"
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNBOEQ3NUFEN0I4M0NCRkUKUldUK3k0TjdyWFdOT3R1VW1Kc2VMNHJiSXhQY1NDVklDeEFzNDBiSVpzZGV5WnQyMGZMdzZVSlUK"
     }
   },
 
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["msi", "nsis"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

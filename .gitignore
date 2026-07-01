@@ -23,3 +23,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Chiavi di firma di Tauri
+main.key
+main.key.pub
+*.key
+*.key.pub
+
+latest.json

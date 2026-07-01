@@ -2,6 +2,10 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
+
+
 // TEMA (PrimeVue 3)
 import "primevue/resources/themes/lara-light-blue/theme.css";
 // CORE
@@ -35,9 +39,16 @@ async function checkForUpdates() {
 
 checkForUpdates();
 
+// Forza sempre il tema light
+document.documentElement.classList.remove("dark");
+
+
+
 
 const app = createApp(App);
 app.use(PrimeVue);
+app.use(ConfirmationService);
+app.use(ToastService);
 app.use(router);
 app.mount("#app");
 // await updater();

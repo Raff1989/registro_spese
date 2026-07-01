@@ -1,4 +1,4 @@
-:root {
+/* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -11,7 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --accent: #4da3ff; /* colore di default */
+  --accent: #4da3ff; 
 }
 
 a {
@@ -79,8 +79,6 @@ button:focus-visible {
   }
 }
 
-
-/* 🔵 Bottoni PrimeVue */
 .p-button {
   background: var(--accent) !important;
   border-color: var(--accent) !important;
@@ -95,24 +93,201 @@ button:focus-visible {
   opacity: 0.85;
 }
 
-/* 🟢 ToggleButton PrimeVue */
 .p-togglebutton.p-highlight {
   background: var(--accent) !important;
   border-color: var(--accent) !important;
   color: white !important;
 }
 
-/* 🟣 Bottom Navigation attiva */
 .bottom-nav .active {
   color: var(--accent) !important;
 }
 
-/* 🟠 Icone attive */
 .icon-active {
   color: var(--accent) !important;
 }
 
-/* 🟡 Bordo evidenziato */
 .border-accent {
   border-color: var(--accent) !important;
+} */
+
+
+/* =========================================================
+   🎨 LIGHT MODE (default)
+   ========================================================= */
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --text-strong: #000000;
+  --card-bg: #f5f5f5;
+  --accent: #4da3ff;
+}
+
+/* =========================================================
+   🌙 DARK MODE
+   ========================================================= */
+.dark {
+  --bg: #121212;
+  --text: #e5e5e5;
+  --text-strong: #ffffff;
+  --card-bg: #1e1e1e;
+  --accent: #4da3ff;
+}
+
+/* =========================================================
+   📌 APPLICAZIONE TEMA
+   ========================================================= */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 600;
+}
+
+/* Testi principali */
+h1, h2, h3, h4, h5, h6,
+label, p, span, div {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+/* =========================================================
+   🟣 CARD
+   ========================================================= */
+.card,
+.p-card {
+  background: var(--card-bg) !important;
+  color: var(--text-strong) !important;
+  border-radius: 12px;
+}
+
+/* =========================================================
+   🔵 INPUT, DROPDOWN, CALENDAR
+   ========================================================= */
+.p-inputtext,
+.p-dropdown,
+.p-calendar {
+  background: var(--card-bg) !important;
+  /* color: var(--text-strong) !important; */
+  color: black !important;
+  border: 1px solid #444 !important;
+  font-weight: 600 !important;
+}
+
+.dark .p-inputtext,
+.dark .p-dropdown,
+.dark .p-calendar {
+  border-color: #666 !important;
+}
+
+/* Label interna dropdown */
+.p-dropdown-label {
+  color: var(--text-strong) !important;
+}
+
+/* =========================================================
+   🔽 LISTA DROPDOWN — SEMPRE NERA
+   ========================================================= */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item .p-dropdown-item-label {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Hover */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #e6e6e6 !important;
+}
+
+/* Selezionato */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #d0d0d0 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* =========================================================
+   🟡 DIALOG
+   ========================================================= */
+.p-dialog,
+.p-dialog-header,
+.p-dialog-content {
+  background: var(--card-bg) !important;
+  color: var(--text-strong) !important;
+}
+
+/* =========================================================
+   🔵 BOTTONI
+   ========================================================= */
+.p-button {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+.p-button.p-button-outlined {
+  background: transparent !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+/* ToggleButton */
+.p-togglebutton.p-highlight {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: white !important;
+}
+
+/* =========================================================
+   🔗 LINK
+   ========================================================= */
+a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   🔽 DROPDOWN LIST — TESTO SEMPRE NERO
+   ========================================================= */
+
+/* Sfondo lista in LIGHT MODE */
+body .p-dropdown-panel {
+  background: #ffffff !important;
+}
+
+/* Sfondo lista in DARK MODE */
+.dark body .p-dropdown-panel {
+  background: #2a2a2a !important; /* scuro ma leggibile */
+}
+
+/* Testo delle opzioni — SEMPRE NERO */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item .p-dropdown-item-label {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Hover */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #e6e6e6 !important;
+}
+
+/* Hover in dark mode */
+.dark body .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #3a3a3a !important;
+}
+
+/* Selezionato */
+body .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #d0d0d0 !important;
+  color: #000000 !important;
+}
+
+/* Selezionato in dark mode */
+.dark body .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #4a4a4a !important;
+  color: #000000 !important;
 }
